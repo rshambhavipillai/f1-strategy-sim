@@ -15,6 +15,33 @@ from config import (
 )
 
 
+def safe_encode_value(encoder, value, default_code=0):
+    """
+    Safely encode a value using a LabelEncoder, handling unseen labels.
+    
+    Args:
+        encoder: fitted LabelEncoder
+        value: value to encode
+        default_code: code to use if value is unseen (default: 0, first class)
+    
+    Returns:
+        encoded value (int)
+    """
+    value_str = str(value).lower()  # Normalize to lowercase
+    
+    try:
+        # Try to find matching class (case-insensitive)
+        for i, class_val in enumerate(encoder.classes_):
+            if str(class_val).lower() == value_str:
+                return i
+        
+        # If no match found, use default
+        return default_code
+    except Exception:
+        return default_code
+
+
+
 def predict_lap_time(model, feature_cols, track_id, driver_state, race_state, encoders):
     """
     Predict lap time for a driver in current conditions.
@@ -63,11 +90,13 @@ def predict_lap_time(model, feature_cols, track_id, driver_state, race_state, en
         else:
             features[col] = 0  # Default
     
-    # Encode categorical features
+    # Encode categorical features with safe encoding
     df_row = pd.DataFrame([features])
     for col in ['compound', 'track_id']:
         if col in feature_cols and col in encoders:
-            df_row[col] = encoders[col].transform(df_row[col].astype(str))
+            # Use safe encoding to handle unseen labels
+            encoded_val = safe_encode_value(encoders[col], features[col])
+            df_row[col] = encoded_val
     
     # Get model prediction
     X = df_row[feature_cols]

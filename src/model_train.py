@@ -35,11 +35,15 @@ def encode_categorical_features(df, feature_cols, encoders=None):
     
     for col in categorical_cols:
         if col in feature_cols:
+            # Normalize compound to lowercase for consistency
+            if col == 'compound':
+                df_encoded[col] = df_encoded[col].astype(str).str.lower()
+            
             if col not in encoders:
                 encoders[col] = LabelEncoder()
-                df_encoded[col] = encoders[col].fit_transform(df[col].astype(str))
+                df_encoded[col] = encoders[col].fit_transform(df_encoded[col].astype(str))
             else:
-                df_encoded[col] = encoders[col].transform(df[col].astype(str))
+                df_encoded[col] = encoders[col].transform(df_encoded[col].astype(str))
     
     return df_encoded, encoders
 
