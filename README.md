@@ -243,10 +243,6 @@ TYRE_DEGRADATION = {
 - streamlit (web app)
 - Optional: xgboost, lightgbm (advanced models)
 
-## License
-
-[Your License Here]
-
 ## Contributing
 
 Contributions welcome! Please fork and submit pull requests.
