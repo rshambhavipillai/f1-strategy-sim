@@ -44,7 +44,6 @@ htmlcov/
 # Data files (large/sensitive)
 data/
 *.pickle
-*.pkl
 
 # Jupyter
 .ipynb_checkpoints/
